@@ -1,8 +1,8 @@
-# Projeto Flappy Bird utilização de WebGL
+# Projeto Snake (cobrinha) com utilização de WebGL
 
-Projeto Flappy Bird sem utilização de biblioteca ThreeGL
+O projeto Cobrinha não terá uso de biblioteca ThreeGL
 
-O projeto poderá ser acessado em [Flappy Bird WebGL](https://github.com/joaovillarb/FlappyBird-WebGL/)
+O projeto poderá ser acessado em [Cobrinha.io](https://github.com/joaovillarb/Cobrinha.io)
 
 ## Team
 	Carlos Reis
