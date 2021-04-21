@@ -51,6 +51,20 @@ function drawFood() {
     context.fillRect(food.x, food.y, box, box)
 }
 
+function drawMain() {
+    context.lineWidth = 2; 
+    context.strokeStyle = 'black'; // A borda também será preta
+
+    // A borda é desenhada do lado de fora do retângulo, então vamos
+    // precisa movê-lo um pouco para a direita e para cima. Além disso, vamos precisar
+    // para deixar um espaço de 20 pixels no topo para desenhar a interface.
+    context.strokeRect(0, 0, canvas.width, canvas.height);
+
+    context.fillStyle = 'black';
+    context.font = '12px sans-serif';
+    context.fillText('Score: ' + score + ' - Level: ' + level, 2, 12);
+}
+
 function toEat() {
     if (snake[0].x == food.x && snake[0].y == food.y) {
         // snake.unshift({ x: box, y: box })
@@ -67,10 +81,10 @@ window.onload = function () {
 
     var body = document.getElementsByTagName('body')[0];
     body.appendChild(canvas);
-
+    
     drawSnake()
     drawFood()
-
+    drawMain()
     document.addEventListener('keydown', keyDownHandler)
 
     update()
