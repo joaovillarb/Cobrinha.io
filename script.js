@@ -110,7 +110,7 @@ window.onload = function () {
         }
 
         if (active) {
-            setTimeout(drawGame, speed - (level * 50));
+            setTimeout(drawGame, 100);
         }
     }
 
