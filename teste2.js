@@ -9,23 +9,33 @@ let xLineTotal;
 let yLineTotal;
 
 let map;
-let snake = new Array(3);
+let snake;
 
 let WIDTH;//window.innerWidth;
 let HEIGHT;//window.innerHeight;
 
-let score = 0;
-let level = 0;
+let score;
+let level;
+
+let speed;
 
 let active = true;
 
-let direction = "RIGHT";
+let direction;
 
 var rndX, rndY;
 
 function initCanvas() {
     WIDTH = 300;
     HEIGHT = 300;
+
+    level = 0;
+    score = 0;
+    speed = 100;
+    active = true;
+    direction = "RIGHT"
+    map = null;
+    snake = new Array(3);
 
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
@@ -44,6 +54,7 @@ function initCanvas() {
 
 function drawGame() {
     context.clearRect(0, 0, canvas.width, canvas.height);
+    console.log(map[snake[0].x][snake[0].y])
 
     for (var i = snake.length - 1; i >= 0; i--) {
         if (i === 0) {
@@ -79,10 +90,11 @@ function drawGame() {
                 snake.push({ x: snake[snake.length - 1].x, y: snake[snake.length - 1].y });
                 map[snake[snake.length - 1].x][snake[snake.length - 1].y] = 2;
 
-                if ((score % 100) == 0) {
+                if ((score % 10) === 0) {
                     level += 1;
                 }
 
+                // Caso a cabeça atinga outra parte do corpo, finaliza o jogo
             } else if (map[snake[0].x][snake[0].y] === 2) {
                 console.log('else if')
                 console.log(map[snake[0].x][snake[0].y])
@@ -119,7 +131,9 @@ function drawGame() {
     }
 
     if (active) {
-        setTimeout(drawGame, 100);
+        let velocidade = speed - (level * 10);
+        console.log(velocidade)
+        setTimeout(drawGame, velocidade);
     }
 }
 
@@ -161,6 +175,8 @@ function generateSnake() {
         rndX = Math.round(Math.random() * xLineTotal);
     }
 
+    console.log(rndX)
+    console.log(snake.length)
     for (let i = 0; i < snake.length; i++) {
         snake[i] = { x: rndX - i, y: rndY };
         map[rndX - i][rndY] = 2;
@@ -239,24 +255,26 @@ function generateGrid() {
     CanvasHeight = context.canvas.height;
 
     xLineTotal = Math.floor(CanvasWidth / girdSize); // Calcula o número de linhas do eixo x
-    console.log('linha - ' + xLineTotal);
-    for (let j = 0; j < xLineTotal; j++) {
-        context.beginPath(); // Open the path and set different styles
-        context.moveTo(girdSize * j, 0);
-        context.lineTo(girdSize * j, CanvasHeight);
-        context.strokeStyle = "#ccc"; // Set the color of each line
-        context.stroke();
-    }
-
     yLineTotal = Math.floor(CanvasHeight / girdSize); // Calcula o número de linhas do eixo y
-    console.log('coluna - ' + yLineTotal);
-    for (let i = 0; i < yLineTotal; i++) {
-        context.beginPath(); // Open the path and set different styles
-        context.moveTo(0, girdSize * i - 0.5); // -0.5 is to solve the problem of pixel blur
-        context.lineTo(CanvasWidth, girdSize * i - 0.5);
-        context.strokeStyle = "#ccc"; // Set the color of each line
-        context.stroke();
-    }
+
+
+    // console.log('linha - ' + xLineTotal);
+    // for (let j = 0; j < xLineTotal; j++) {
+    //     context.beginPath(); // Open the path and set different styles
+    //     context.moveTo(girdSize * j, 0);
+    //     context.lineTo(girdSize * j, CanvasHeight);
+    //     context.strokeStyle = "#ccc"; // Set the color of each line
+    //     context.stroke();
+    // }
+
+    // console.log('coluna - ' + yLineTotal);
+    // for (let i = 0; i < yLineTotal; i++) {
+    //     context.beginPath(); // Open the path and set different styles
+    //     context.moveTo(0, girdSize * i - 0.5); // -0.5 is to solve the problem of pixel blur
+    //     context.lineTo(CanvasWidth, girdSize * i - 0.5);
+    //     context.strokeStyle = "#ccc"; // Set the color of each line
+    //     context.stroke();
+    // }
 
     map = new Array(xLineTotal);
     for (let i = 0; i < map.length; i++) {
