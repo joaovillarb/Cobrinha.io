@@ -1,29 +1,21 @@
-const canvas = document.createElement("canvas")
-const context = canvas.getContext("2d")
-
-const box = 19
-
-let food = { x: Math.random() * (box - 1) + 1, y: Math.floor(Math.random() * (box - 1) + 1) * box }
-
-let snake = new Array(3);
-
 window.onload = function () {
-    console.log(food)
-    var score = 0,
+    var canvas = document.createElement('canvas'),
+        ctx = canvas.getContext('2d'),
+        score = 0,
         level = 0,
         direction = 0,
+        snake = new Array(3),
         active = true,
         speed = 400;
 
-
     // Initialize the matrix.
-    var map = new Array(30);
+    var map = new Array(20);
     for (var i = 0; i < map.length; i++) {
-        map[i] = new Array(30);
+        map[i] = new Array(20);
     }
 
-    canvas.width = 604;
-    canvas.height = 654;
+    canvas.width = 204;
+    canvas.height = 224;
 
     var body = document.getElementsByTagName('body')[0];
     body.appendChild(canvas);
@@ -32,10 +24,9 @@ window.onload = function () {
     map = generateSnake(map);
 
     // Add the food
-    // map = generateFood(map);
+    map = generateFood(map);
 
     drawGame();
-    drawFood();
 
     window.addEventListener('keydown', function (e) {
         if (e.key === 'ArrowUp' && direction !== 3) {
@@ -50,8 +41,8 @@ window.onload = function () {
     });
 
     function drawGame() {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        console.log('game')
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         for (var i = snake.length - 1; i >= 0; i--) {
             if (i === 0) {
                 switch (direction) {
@@ -70,9 +61,9 @@ window.onload = function () {
                 }
 
                 if (snake[0].x < 0 ||
-                    snake[0].x >= map.length ||
+                    snake[0].x >= 20 ||
                     snake[0].y < 0 ||
-                    snake[0].y >= map.length) {
+                    snake[0].y >= 20) {
                     showGameOver();
                     return;
                 }
@@ -80,7 +71,6 @@ window.onload = function () {
                 if (map[snake[0].x][snake[0].y] === 1) {
                     score += 10;
                     map = generateFood(map);
-                    drawFood();
 
                     snake.push({ x: snake[snake.length - 1].x, y: snake[snake.length - 1].y });
                     map[snake[snake.length - 1].x][snake[snake.length - 1].y] = 2;
@@ -90,7 +80,6 @@ window.onload = function () {
                     }
 
                 } else if (map[snake[0].x][snake[0].y] === 2) {
-                    console.log('entrou 2')
                     showGameOver();
                     return;
                 }
@@ -107,16 +96,15 @@ window.onload = function () {
         }
 
         drawMain();
-        drawFood();
-        toEat();
+
         for (var x = 0; x < map.length; x++) {
             for (var y = 0; y < map[0].length; y++) {
                 if (map[x][y] === 1) {
-                    context.fillStyle = 'black';
-                    context.fillRect(x * 10, y * 10 + 20, 10, 10);
+                    ctx.fillStyle = 'black';
+                    ctx.fillRect(x * 10, y * 10 + 20, 10, 10);
                 } else if (map[x][y] === 2) {
-                    context.fillStyle = 'orange';
-                    context.fillRect(x * 10, y * 10 + 20, 10, 10);
+                    ctx.fillStyle = 'orange';
+                    ctx.fillRect(x * 10, y * 10 + 20, 10, 10);
                 }
             }
         }
@@ -128,17 +116,17 @@ window.onload = function () {
 
 
     function drawMain() {
-        context.lineWidth = 2; // Nossa borda terá uma espessura de 2 pixels
-        context.strokeStyle = 'black'; // A borda também será preta
+        ctx.lineWidth = 2; // Nossa borda terá uma espessura de 2 pixels
+        ctx.strokeStyle = 'black'; // A borda também será preta
 
         // A borda é desenhada do lado de fora do retângulo, então vamos
         // precisa movê-lo um pouco para a direita e para cima. Além disso, vamos precisar
         // para deixar um espaço de 20 pixels no topo para desenhar a interface.
-        context.strokeRect(2, 20, canvas.width - 3, canvas.height - 24);
+        ctx.strokeRect(2, 20, canvas.width - 4, canvas.height - 24);
 
-        context.fillStyle = 'black';
-        context.font = '12px sans-serif';
-        context.fillText('Score: ' + score + ' - Level: ' + level, 2, 12);
+        ctx.fillStyle = 'black';
+        ctx.font = '12px sans-serif';
+        ctx.fillText('Score: ' + score + ' - Level: ' + level, 2, 12);
     }
 
     function generateFood(map) {
@@ -183,37 +171,16 @@ window.onload = function () {
         active = false;
 
         // Limpe a tela
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        context.fillStyle = 'black';
-        context.font = '16px sans-serif';
+        ctx.fillStyle = 'black';
+        ctx.font = '16px sans-serif';
 
-        context.fillText('Fim de jogo!', ((canvas.width / 2) - (context.measureText('Fim de jogo!').width / 2)), 50);
+        ctx.fillText('Fim de jogo!', ((canvas.width / 2) - (ctx.measureText('Fim de jogo!').width / 2)), 50);
 
-        context.font = '12px sans-serif';
+        ctx.font = '12px sans-serif';
 
-        context.fillText('Sua pontuação foi: ' + score, ((canvas.width / 2) - (context.measureText('Sua pontuação foi: ' + score).width / 2)), 70);
+        ctx.fillText('Sua pontuação foi: ' + score, ((canvas.width / 2) - (ctx.measureText('Sua pontuação foi: ' + score).width / 2)), 70);
 
     }
 };
-
-function drawFood() {
-    console.log('food')
-    context.fillStyle = "#4c4c4c"
-    context.fillRect(food.x, food.y, 10, 10)
-}
-
-function toEat() {
-    console.log(snake);
-    console.log("x " + snake[0].x);
-    console.log("x " + food.x);
-    console.log("y " + snake[0].y);
-    console.log("y " + food.y);
-    if (snake[0].x == food.x && snake[0].y == food.y) {
-        // snake.unshift({ x: box, y: box })
-        food = { x: Math.floor(Math.random() * (box - 1) + 1), y: Math.floor(Math.random() * (box - 1) + 1) }
-        return;
-    }
-
-    // snake.pop()
-}
