@@ -14,6 +14,13 @@ let snake = new Array(3);
 let WIDTH;//window.innerWidth;
 let HEIGHT;//window.innerHeight;
 
+let score = 0;
+let level = 0;
+
+let active = true;
+
+let direction = "RIGHT";
+
 var rndX, rndY;
 
 function initCanvas() {
@@ -31,10 +38,71 @@ function initCanvas() {
     console.log(map)
 
     drawGame();
+
+    window.addEventListener('keydown', keyDownHandler);
 }
 
 function drawGame() {
-    // context.clearRect(0, 0, canvas.width, canvas.height);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (var i = snake.length - 1; i >= 0; i--) {
+        if (i === 0) {
+            switch (direction) {
+                case "RIGHT": // Right
+                    snake[0] = { x: snake[0].x + 1, y: snake[0].y }
+                    console.log("case")
+                    break;
+                case "LEFT": // Left
+                    snake[0] = { x: snake[0].x - 1, y: snake[0].y }
+                    break;
+                case "UP": // Up
+                    snake[0] = { x: snake[0].x, y: snake[0].y - 1 }
+                    break;
+                case "DOWN": // Down
+                    snake[0] = { x: snake[0].x, y: snake[0].y + 1 }
+                    break;
+            }
+
+            if (snake[0].x < 0 ||
+                snake[0].x >= xLineTotal ||
+                snake[0].y < 0 ||
+                snake[0].y >= yLineTotal) {
+                console.log('if 2')
+                showGameOver();
+                return;
+            }
+
+            if (map[snake[0].x][snake[0].y] === 1) {
+                score += 10;
+                generateFood();
+
+                snake.push({ x: snake[snake.length - 1].x, y: snake[snake.length - 1].y });
+                map[snake[snake.length - 1].x][snake[snake.length - 1].y] = 2;
+
+                if ((score % 100) == 0) {
+                    level += 1;
+                }
+
+            } else if (map[snake[0].x][snake[0].y] === 2) {
+                console.log('else if')
+                console.log(map[snake[0].x][snake[0].y])
+                console.log(snake[0].x)
+                console.log(snake[0].y)
+                showGameOver();
+                return;
+            }
+
+            map[snake[0].x][snake[0].y] = 2;
+        } else {
+            if (i === (snake.length - 1)) {
+                map[snake[i].x][snake[i].y] = null;
+            }
+
+            snake[i] = { x: snake[i - 1].x, y: snake[i - 1].y };
+            map[snake[i].x][snake[i].y] = 2;
+        }
+    }
+
     drawMain();
 
     // Start cycling the matrix
@@ -49,6 +117,27 @@ function drawGame() {
             }
         }
     }
+
+    if (active) {
+        setTimeout(drawGame, 100);
+    }
+}
+
+function keyDownHandler(event) {
+    let key = event.key;
+    if (key === 'ArrowUp' && direction !== "DOWN") {
+        console.log('UP')
+        direction = "UP"; // Up
+    } else if (key === 'ArrowDown' && direction !== "UP") {
+        console.log('DOWN')
+        direction = "DOWN"; // Down
+    } else if (key === 'ArrowLeft' && direction !== "RIGHT") {
+        console.log('LEFT')
+        direction = "LEFT"; // Left
+    } else if (key === 'ArrowRight' && direction !== "LEFT") {
+        console.log('RIGHT')
+        direction = "RIGHT"; // Right
+    }
 }
 
 function drawMain() {
@@ -56,6 +145,10 @@ function drawMain() {
     context.strokeStyle = 'black';
 
     context.strokeRect(2, 20, canvas.width - 2, canvas.height - 20);
+
+    context.fillStyle = 'black';
+    context.font = '12px sans-serif';
+    context.fillText('Score: ' + score + ' - Level: ' + level, 2, 12);
 }
 
 function generateSnake() {
@@ -72,6 +165,25 @@ function generateSnake() {
         snake[i] = { x: rndX - i, y: rndY };
         map[rndX - i][rndY] = 2;
     }
+}
+
+
+function showGameOver() {
+    // Desative o jogo.
+    active = false;
+
+    // Limpe a tela
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    context.fillStyle = 'black';
+    context.font = '16px sans-serif';
+
+    context.fillText('Fim de jogo!', ((canvas.width / 2) - (context.measureText('Fim de jogo!').width / 2)), 50);
+
+    context.font = '12px sans-serif';
+
+    context.fillText('Sua pontuação foi: ' + score, ((canvas.width / 2) - (context.measureText('Sua pontuação foi: ' + score).width / 2)), 70);
+
 }
 
 function generateFood() {
@@ -104,6 +216,7 @@ function resizeCanvas() {
     document.body.appendChild(canvas);
     generateGrid();
 }
+
 
 window.onload = function () {
     // initCanvas();
