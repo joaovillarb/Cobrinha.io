@@ -9,13 +9,12 @@ body{
 }
 
 canvas {  
-  margin-top: 50px;
   position: relative;
   width: 600px;
   height: 600px;
   border: 1px solid black;
-  float: left;
-  margin-left: 660px;
+  margin: 15px auto auto;
+  display: block;
 }
 
 .content {
