@@ -7,12 +7,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Cobrinha.io</title>
-    <!-- <script src="script.js" type="text/javascript"></script> -->
-    <script src="cobrinha.js" type="text/javascript"></script>
+    <script src="teste2.js" type="text/javascript"></script>
+    <!-- <script src="cobrinha.js" type="text/javascript"></script> -->
 </head>
 
+<style>
+    canvas {
+        position: relative;
+        width: 600px;
+        height: 600px;
+        border: 1px solid red;
+        float: left;
+    }
+</style>
+
 <body>
-    <button onClick="start()" class="start" id="start">Start</button>
+    <!-- <button onClick="resizeCanvas()" class="start" id="start">Start</button> -->
+    <button onClick="initCanvas()" class="start" id="start">Start</button>
 </body>
+
+<!-- <body οnlοad="initThree();"> -->
+
+<script src="./libs/three.js"></script>
 
 </html>
