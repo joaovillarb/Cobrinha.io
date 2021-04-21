@@ -11,13 +11,14 @@ let yLineTotal;
 let map;
 let snake = new Array(3);
 
-
 let WIDTH;//window.innerWidth;
 let HEIGHT;//window.innerHeight;
 
+var rndX, rndY;
+
 function initCanvas() {
-    WIDTH = 600;
-    HEIGHT = 200;
+    WIDTH = 300;
+    HEIGHT = 300;
 
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
@@ -26,6 +27,7 @@ function initCanvas() {
     generateGrid();
 
     generateSnake();
+    generateFood();
     console.log(map)
 
     drawGame();
@@ -57,12 +59,8 @@ function drawMain() {
 }
 
 function generateSnake() {
-    yLineTotal = Math.floor(CanvasHeight / girdSize);
-    xLineTotal = Math.floor(CanvasWidth / girdSize);
-
     // Gera em uma posição aleatória
-    var rndX = Math.round(Math.random() * (xLineTotal - 1)),
-        rndY = Math.round(Math.random() * (yLineTotal - 1));
+    generateRandomXY()
 
     // Vamos ter certeza de que não estamos fora dos limites, pois também precisamos criar espaço para acomodar o
     // outras duas peças do corpo
@@ -74,6 +72,26 @@ function generateSnake() {
         snake[i] = { x: rndX - i, y: rndY };
         map[rndX - i][rndY] = 2;
     }
+}
+
+function generateFood() {
+    // Gere uma posição aleatória para as linhas e colunas.
+    generateRandomXY();
+
+    // Também precisamos vigiar para não colocar a comida
+    // na mesma posição da matriz ocupada por uma parte do
+    // corpo da cobra.
+    while (map[rndX][rndY] === 2) {
+        rndX = Math.round(Math.random() * (xLineTotal - 1));
+        rndY = Math.round(Math.random() * (yLineTotal - 1));
+    }
+
+    map[rndX][rndY] = 1;
+}
+
+function generateRandomXY() {
+    rndX = Math.round(Math.random() * (xLineTotal - 1));
+    rndY = Math.round(Math.random() * (yLineTotal - 1));
 }
 
 function resizeCanvas() {
