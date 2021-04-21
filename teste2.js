@@ -24,8 +24,8 @@ let direction = "RIGHT";
 var rndX, rndY;
 
 function initCanvas() {
-    WIDTH = 300;
-    HEIGHT = 300;
+    WIDTH = document.getElementById('campo1').value;
+    HEIGHT = document.getElementById('campo2').value;
 
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
