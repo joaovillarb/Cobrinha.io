@@ -1,4 +1,4 @@
-const canvas = document.createElement('canvas');
+const canvas = document.getElementById("canvas");
 const context = canvas.getContext('2d');
 
 const girdSize = 10;
@@ -40,9 +40,8 @@ function initCanvas() {
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
 
-    document.body.appendChild(canvas);
+    // document.body.appendChild(canvas);
     generateGrid();
-
     generateSnake();
     generateFood();
     console.log(map)
@@ -90,7 +89,7 @@ function drawGame() {
                 snake.push({ x: snake[snake.length - 1].x, y: snake[snake.length - 1].y });
                 map[snake[snake.length - 1].x][snake[snake.length - 1].y] = 2;
 
-                if ((score % 10) === 0) {
+                if ((score % 100) === 0) {
                     level += 1;
                 }
 
@@ -121,11 +120,11 @@ function drawGame() {
     for (var x = 0; x < map.length; x++) {
         for (let y = 0; y < map[0].length; y++) {
             if (map[x][y] === 1) {
-                context.fillStyle = 'black';
+                context.fillStyle = 'red';
                 context.fillRect(x * girdSize, y * girdSize, 10, 10);
             } else if (map[x][y] === 2) {
-                context.fillStyle = 'orange';
-                context.fillRect(x * girdSize, y * girdSize, 10, 10);
+                context.fillStyle = '#6bd82b';
+                context.fillRect((x * girdSize) + 2, y * girdSize, 10, 10);
             }
         }
     }
@@ -155,14 +154,15 @@ function keyDownHandler(event) {
 }
 
 function drawMain() {
-    context.lineWidth = 2;
-    context.strokeStyle = 'black';
+    // context.lineWidth = 2;
+    // context.strokeStyle = 'black';
 
-    context.strokeRect(2, 20, canvas.width - 2, canvas.height - 20);
+    // context.strokeRect(2, 20, canvas.width - 2, canvas.height - 20);
 
     context.fillStyle = 'black';
     context.font = '12px sans-serif';
-    context.fillText('Score: ' + score + ' - Level: ' + level, 2, 12);
+    context.fillText('Score ' + score, score > 0 ? score > 90 ? canvas.height - 60 : canvas.height - 55 : canvas.height - 50, canvas.width - 5);
+    context.fillText('Level ' + level, 2, canvas.width - 5);
 }
 
 function generateSnake() {
@@ -187,7 +187,7 @@ function generateSnake() {
 function showGameOver() {
     // Desative o jogo.
     active = false;
-
+   
     // Limpe a tela
     context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -200,6 +200,8 @@ function showGameOver() {
 
     context.fillText('Sua pontuação foi: ' + score, ((canvas.width / 2) - (context.measureText('Sua pontuação foi: ' + score).width / 2)), 70);
 
+    document.getElementById('score').value = score;
+    document.getElementById('enviar_score').disabled = false;
 }
 
 function generateFood() {
@@ -235,18 +237,19 @@ function resizeCanvas() {
 
 
 window.onload = function () {
-    // initCanvas();
-    /*
-                 1. Set the size of the grid, gridSize is used to determine the spacing between the lines in the grid
-                 2. Get the width and height of Canvas, which are used to calculate the number of paintings on the x-axis and y-axis
-                 3. Use the traversal method to draw the lines of the x-axis
-                 4. Use the traversal method to draw the y-axis line
-    */
+    let largura = document.getElementById('campo1')
+    let altura = document.getElementById('campo2')
 
-    // 1. Set the grid size
-    // generateGrid();
+    largura.value = 300;
+    altura.value = 300;
 
+    get_scores(list_scores);
 
+    largura.setAttribute('validado', true);
+    altura.setAttribute('validado', true);
+
+    document.getElementById('start').disabled = false;
+    document.getElementById('start').click()
 }
 
 function generateGrid() {

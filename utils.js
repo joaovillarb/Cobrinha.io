@@ -4,44 +4,43 @@ function onlynumber(evt) {
   key = String.fromCharCode(key);
   var regex = /^[0-9.,]+$/;
   if (!regex.test(key)) {
-      theEvent.returnValue = false;
-      if (theEvent.preventDefault) theEvent.preventDefault();
+    theEvent.returnValue = false;
+    if (theEvent.preventDefault) theEvent.preventDefault();
   }
 }
 
-function validaX(){ 
-  var x = document.getElementById('campo1').value;
-  if(x < 300 || x > 720){
-    document.getElementById('campo1').value = "";
-    document.getElementById('campoHiden1').value = "0";
-    alert('Numero invalido inválido');
+function valida(campo) {
+  var x = campo.value;
+  if (x < 300 || x > 720) {
+    campo.classList.add("error");
+    campo.setAttribute('validado', false);
+    $.notify('O valor precisa estar entre 300 e 720');
     validaCampos();
     return;
   }
-  document.getElementById('campoHiden1').value = "1";
+  campo.classList.remove("error");
+  campo.setAttribute('validado', true);
   validaCampos();
 }
-
-function validaY(){ 
-  var x = document.getElementById('campo2').value;
-  if(x < 300 || x > 720){
-    document.getElementById('campo2').value = "";
-    document.getElementById('campoHiden2').value = "0";
-    alert('Numero invalido inválido');
-    validaCampos();
+function validaNome(campo) {
+  if(campo==""){
+    $.notify('Nome nao pode ser vazio!');
     return;
   }
-  document.getElementById('campoHiden2').value = "1";
-  validaCampos();
+}
+function bloqueia() {
+    document.getElementById('enviar_score').disabled = true;
+    document.getElementById('player_name').value ="";
 }
 
-function validaCampos(){
-  var x = document.getElementById('campoHiden1').value;
-  var y = document.getElementById('campoHiden2').value;
-  if(x == 1 && y == 1){
+
+function validaCampos() {
+  var largura = document.getElementById('campo1').getAttribute('validado');
+  var altura = document.getElementById('campo2').getAttribute('validado');
+
+  if (largura == 'true' && altura == 'true') {
     document.getElementById('start').disabled = false;
-  }else{
+  } else {
     document.getElementById('start').disabled = true;
   }
 }
-
