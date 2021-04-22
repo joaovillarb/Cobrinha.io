@@ -242,8 +242,8 @@ window.onload = function () {
     let largura = document.getElementById('campo1')
     let altura = document.getElementById('campo2')
 
-    largura.value = 300;
-    altura.value = 300;
+    largura.value = 450;
+    altura.value = 450;
 
     largura.setAttribute('validado', true);
     altura.setAttribute('validado', true);
