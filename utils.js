@@ -1,9 +1,7 @@
 function onlynumber(evt) {
   var theEvent = evt || window.event;
   var key = theEvent.keyCode || theEvent.which;
-
   key = String.fromCharCode(key);
-  // console.log(key);
   var regex = /^[0-9.,]+$/;
   if (!regex.test(key)) {
       theEvent.returnValue = false;
@@ -24,8 +22,7 @@ function validaX(){
   validaCampos();
 }
 
-function validaY(){
- 
+function validaY(){ 
   var x = document.getElementById('campo2').value;
   if(x < 300 || x > 720){
     document.getElementById('campo2').value = "";
