@@ -5,13 +5,54 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Cobrinha.io</title>
-    <script src="script.js" type="text/javascript"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="teste.css">
+    <link rel="stylesheet" type="text/css" href="./libs/bootstrap.min.css" />
+
 </head>
 
+
 <body>
+    <input type="hidden" value="0" style="border: 1px solid black" id="campoHiden1">
+    <input type="hidden" value="0" style="border: 1px solid black" id="campoHiden2">
+    <div class="content mt-3">
+        <div class="row">
+            <div class="col">
+
+                <h1>
+                    <svg class="cobrinha"></svg>
+                    Cobrinha.io
+                    <svg class="cobrinha"></svg>
+                </h1>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <label class="pr-2 textBlack">Largura: </label>
+            <input type="number" onfocusout="valida(campo1)" validado="false" tabindex="0" maxlength="3"
+                placeholder="300-720" onkeypress="return onlynumber();" id="campo1">
+            <label class="px-2 textBlack">Altura: </label>
+            <input type="number" onfocusout="valida(campo2)" placeholder="300-720" validado="false" tabindex="0"
+                maxlength="3" onkeypress="return onlynumber();" id="campo2">
+            <button onClick="initCanvas()" id="start" type="button" class="ml-3 btn btn-dark" disabled>Start</button>
+        </div>
+
+        <canvas id="canvas" width="300" height="300"></canvas>
+    </div>
 
 </body>
+
+<footer>
+    <script src="./libs/three.js"></script>
+    <script src="./libs/jquery.min.js"></script>
+    <script src="./libs/notify.min.js"></script>
+    <script src="./libs/bootstrap.min.js"></script>
+    <script src="utils.js"></script>
+    <script src="teste2.js"></script>
+</footer>
 
 </html>

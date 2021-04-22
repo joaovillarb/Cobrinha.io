@@ -41,14 +41,9 @@ window.onload = function () {
     });
 
     function drawGame() {
-        // Clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Percorra todas as partes do corpo da cobra, começando pela última
         for (var i = snake.length - 1; i >= 0; i--) {
-
-            // Vamos apenas realizar a detecção de colisão usando a cabeça
-            // então será tratado de forma diferente do resto
             if (i === 0) {
                 switch (direction) {
                     case 0: // Right
@@ -65,8 +60,6 @@ window.onload = function () {
                         break;
                 }
 
-                // Verifique se não está fora dos limites. Se for mostrar o jogo em pop-up
-                // e saia da função.
                 if (snake[0].x < 0 ||
                     snake[0].x >= 20 ||
                     snake[0].y < 0 ||
@@ -75,25 +68,17 @@ window.onload = function () {
                     return;
                 }
 
-                // Detecte se acertamos em comida e aumente a pontuação se o fizermos,
-                // gerando uma nova posição de alimento no processo, e também
-                // adicionando um novo elemento ao array snake.
                 if (map[snake[0].x][snake[0].y] === 1) {
                     score += 10;
                     map = generateFood(map);
 
-                    // Adicione uma nova peça de corpo à matriz
                     snake.push({ x: snake[snake.length - 1].x, y: snake[snake.length - 1].y });
                     map[snake[snake.length - 1].x][snake[snake.length - 1].y] = 2;
 
-                    // Se a pontuação for um multiplicador de 100 (como 100, 200, 300, etc.)
-                    // aumenta o nível, o que o tornará mais rápido.
                     if ((score % 100) == 0) {
                         level += 1;
                     }
 
-                    // Vamos também verificar se a cabeça não está batendo em outra parte do corpo
-                    // em caso afirmativo, também precisamos encerrar o jogo.
                 } else if (map[snake[0].x][snake[0].y] === 2) {
                     showGameOver();
                     return;
@@ -101,9 +86,6 @@ window.onload = function () {
 
                 map[snake[0].x][snake[0].y] = 2;
             } else {
-                // Lembre-se de que quando eles se movem, os pedaços do corpo se movem para o lugar
-                // onde a peça anterior costumava estar. Se for a última peça,
-                // também precisa limpar a última posição da matriz
                 if (i === (snake.length - 1)) {
                     map[snake[i].x][snake[i].y] = null;
                 }
@@ -113,10 +95,8 @@ window.onload = function () {
             }
         }
 
-        // Desenhe a borda, bem como a pontuação
         drawMain();
 
-        // Comece a ciclar a matriz
         for (var x = 0; x < map.length; x++) {
             for (var y = 0; y < map[0].length; y++) {
                 if (map[x][y] === 1) {
