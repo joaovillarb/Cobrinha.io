@@ -1,186 +1,268 @@
-window.onload = function () {
-    var canvas = document.createElement('canvas'),
-        ctx = canvas.getContext('2d'),
-        score = 0,
-        level = 0,
-        direction = 0,
-        snake = new Array(3),
-        active = true,
-        speed = 400;
+const canvas = document.getElementById("canvas")
+const context = canvas.getContext('2d');
 
-    // Initialize the matrix.
-    var map = new Array(20);
-    for (var i = 0; i < map.length; i++) {
-        map[i] = new Array(20);
-    }
+const getRange = length => [...Array(length).keys()]
 
-    canvas.width = 204;
-    canvas.height = 224;
+const girdSize = 10;
 
-    var body = document.getElementsByTagName('body')[0];
-    body.appendChild(canvas);
+let CanvasWidth;
+let CanvasHeight;
+let xLineTotal;
+let yLineTotal;
 
-    // Add the snake
-    map = generateSnake(map);
+let map;
+let snake;
 
-    // Add the food
-    map = generateFood(map);
+let WIDTH;//window.innerWidth;
+let HEIGHT;//window.innerHeight;
+
+let score;
+let level;
+
+let speed;
+let velocidade;
+
+let active = true;
+
+let direction;
+
+var rndX, rndY;
+
+function initCanvas() {
+    WIDTH = document.getElementById('campo1').value;
+    HEIGHT = document.getElementById('campo2').value;
+
+    level = 0;
+    score = 0;
+    speed = 100;
+    velocidade = speed;
+    active = true;
+    direction = "RIGHT"
+    map = null;
+    snake = new Array(3);
+
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
+
+    generateMap();
+
+    generateSnake();
+    generateFood();
 
     drawGame();
 
-    window.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowUp' && direction !== 3) {
-            direction = 2; // Up
-        } else if (e.key === 'ArrowDown' && direction !== 2) {
-            direction = 3; // Down
-        } else if (e.key === 'ArrowLeft' && direction !== 0) {
-            direction = 1; // Left
-        } else if (e.key === 'ArrowRight' && direction !== 1) {
-            direction = 0; // Right
+    window.addEventListener('keydown', keyDownHandler);
+}
+
+function drawGame() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    // renderCells();
+
+    for (var i = snake.length - 1; i >= 0; i--) {
+        if (i === 0) {
+            switch (direction) {
+                case "RIGHT": // Right
+                    snake[0] = { x: snake[0].x + 1, y: snake[0].y }
+                    break;
+                case "LEFT": // Left
+                    snake[0] = { x: snake[0].x - 1, y: snake[0].y }
+                    break;
+                case "UP": // Up
+                    snake[0] = { x: snake[0].x, y: snake[0].y - 1 }
+                    break;
+                case "DOWN": // Down
+                    snake[0] = { x: snake[0].x, y: snake[0].y + 1 }
+                    break;
+            }
+
+            if (snake[0].x < 0 ||
+                snake[0].x >= xLineTotal ||
+                snake[0].y < 0 ||
+                snake[0].y >= yLineTotal) {
+                console.log('if 2')
+                showGameOver();
+                return;
+            }
+
+
+            //CASO ATINJA A COMIDA
+            if (map[snake[0].x][snake[0].y] === "fruta") {
+                score += 10;
+                generateFood();
+
+                snake.push({ x: snake[snake.length - 1].x, y: snake[snake.length - 1].y });
+                map[snake[snake.length - 1].x][snake[snake.length - 1].y] = "cobra";
+
+                if ((score % 100) === 0) {
+                    level += 1;
+                }
+
+
+            }
+            // Caso a cabeça atinga outra parte do corpo, finaliza o jogo
+            else if (map[snake[0].x][snake[0].y] === 2) {
+                console.log('else if')
+                // console.log(map[snake[0].x][snake[0].y])
+                // console.log(snake[0].x)
+                // console.log(snake[0].y)
+                showGameOver();
+                return;
+            }
+
+            map[snake[0].x][snake[0].y] = 2;
+        } else {
+            console.log('else')
+            if (i === (snake.length - 1)) {
+                map[snake[i].x][snake[i].y] = null;
+            }
+
+            console.log('CABEÇA COBRA X -' + snake[0].x)
+            console.log('CORPO COBRA X -' + snake[i].x)
+            console.log('CABEÇA COBRA Y -' + snake[0].y)
+            console.log('CORPO COBRA Y -' + snake[i].y)
+
+            snake[i] = { x: snake[i - 1].x, y: snake[i - 1].y };
+            map[snake[i].x][snake[i].y] = "cobra";
         }
-    });
+    }
 
-    function drawGame() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawMain();
 
-        for (var i = snake.length - 1; i >= 0; i--) {
-            if (i === 0) {
-                switch (direction) {
-                    case 0: // Right
-                        snake[0] = { x: snake[0].x + 1, y: snake[0].y }
-                        break;
-                    case 1: // Left
-                        snake[0] = { x: snake[0].x - 1, y: snake[0].y }
-                        break;
-                    case 2: // Up
-                        snake[0] = { x: snake[0].x, y: snake[0].y - 1 }
-                        break;
-                    case 3: // Down
-                        snake[0] = { x: snake[0].x, y: snake[0].y + 1 }
-                        break;
-                }
-
-                if (snake[0].x < 0 ||
-                    snake[0].x >= 20 ||
-                    snake[0].y < 0 ||
-                    snake[0].y >= 20) {
-                    showGameOver();
-                    return;
-                }
-
-                if (map[snake[0].x][snake[0].y] === 1) {
-                    score += 10;
-                    map = generateFood(map);
-
-                    snake.push({ x: snake[snake.length - 1].x, y: snake[snake.length - 1].y });
-                    map[snake[snake.length - 1].x][snake[snake.length - 1].y] = 2;
-
-                    if ((score % 100) == 0) {
-                        level += 1;
-                    }
-
-                } else if (map[snake[0].x][snake[0].y] === 2) {
-                    showGameOver();
-                    return;
-                }
-
-                map[snake[0].x][snake[0].y] = 2;
-            } else {
-                if (i === (snake.length - 1)) {
-                    map[snake[i].x][snake[i].y] = null;
-                }
-
-                snake[i] = { x: snake[i - 1].x, y: snake[i - 1].y };
-                map[snake[i].x][snake[i].y] = 2;
+    // Start cycling the matrix
+    for (var x = 0; x < map.length; x++) {
+        for (let y = 0; y < map[0].length; y++) {
+            if (map[x][y] === "fruta") {
+                context.fillStyle = 'red';
+                context.fillRect(x * girdSize, y * girdSize, 10, 10);
+            } else if (map[x][y] === "cobra") {
+                context.fillStyle = '#6bd82b';
+                context.fillRect(x * girdSize, y * girdSize, 10, 10);
             }
         }
-
-        drawMain();
-
-        for (var x = 0; x < map.length; x++) {
-            for (var y = 0; y < map[0].length; y++) {
-                if (map[x][y] === 1) {
-                    ctx.fillStyle = 'black';
-                    ctx.fillRect(x * 10, y * 10 + 20, 10, 10);
-                } else if (map[x][y] === 2) {
-                    ctx.fillStyle = 'orange';
-                    ctx.fillRect(x * 10, y * 10 + 20, 10, 10);
-                }
-            }
-        }
-
-        if (active) {
-            setTimeout(drawGame, 100);
-        }
     }
 
-
-    function drawMain() {
-        ctx.lineWidth = 2; // Nossa borda terá uma espessura de 2 pixels
-        ctx.strokeStyle = 'black'; // A borda também será preta
-
-        // A borda é desenhada do lado de fora do retângulo, então vamos
-        // precisa movê-lo um pouco para a direita e para cima. Além disso, vamos precisar
-        // para deixar um espaço de 20 pixels no topo para desenhar a interface.
-        ctx.strokeRect(2, 20, canvas.width - 4, canvas.height - 24);
-
-        ctx.fillStyle = 'black';
-        ctx.font = '12px sans-serif';
-        ctx.fillText('Score: ' + score + ' - Level: ' + level, 2, 12);
+    if (active) {
+        velocidade = speed - (level * 10);
+        setTimeout(drawGame, velocidade);
     }
+}
 
-    function generateFood(map) {
-        // Gere uma posição aleatória para as linhas e colunas.
-        var rndX = Math.round(Math.random() * 19),
-            rndY = Math.round(Math.random() * 19);
+function keyDownHandler(event) {
+    let key = event.key;
+    if (key === 'ArrowUp' && direction !== "DOWN") {
+        // console.log('UP')
+        direction = "UP"; // Up
+    } else if (key === 'ArrowDown' && direction !== "UP") {
+        // console.log('DOWN')
+        direction = "DOWN"; // Down
+    } else if (key === 'ArrowLeft' && direction !== "RIGHT") {
+        // console.log('LEFT')
+        direction = "LEFT"; // Left
+    } else if (key === 'ArrowRight' && direction !== "LEFT") {
+        // console.log('RIGHT')
+        direction = "RIGHT"; // Right
+    }
+}
 
-        // Também precisamos vigiar para não colocar a comida
-        // na mesma posição da matriz ocupada por uma parte do
-        // corpo da cobra.
-        while (map[rndX][rndY] === 2) {
-            rndX = Math.round(Math.random() * 19);
-            rndY = Math.round(Math.random() * 19);
+const renderCells = () => {
+    context.globalAlpha = 0.15
+    getRange(CanvasWidth).forEach(column => getRange(CanvasHeight).forEach(row => {
+        if ((column + row) % 2 === 1) {
+            context.fillStyle = '#000000';
+            context.fillRect(column * girdSize, row * girdSize, girdSize, girdSize)
         }
+    }))
+    context.globalAlpha = 1
+}
 
-        map[rndX][rndY] = 1;
+function drawMain() {
+    context.fillStyle = 'black';
+    context.font = '15px sans-serif';
+    context.fillText(score, score > 0 ? score > 90 ? canvas.width - 25 : canvas.width - 20 : canvas.width - 13, 15);
+    context.fillText('Level ' + level, 2, canvas.height - 5);
+}
 
-        return map;
+function generateSnake() {
+    // Gera em uma posição aleatória
+    generateRandomXY()
+
+    // Vamos ter certeza de que não estamos fora dos limites, pois também precisamos criar espaço para acomodar o
+    // outras duas peças do corpo
+    while ((rndX - snake.length) < 0) {
+        rndX = Math.round(Math.random() * xLineTotal);
     }
 
-    function generateSnake(map) {
-        // Gere uma posição aleatória para a linha e a coluna do cabeçalho.
-        var rndX = Math.round(Math.random() * 19),
-            rndY = Math.round(Math.random() * 19);
+    for (let i = 0; i < snake.length; i++) {
+        snake[i] = { x: rndX - i, y: rndY };
+        map[rndX - i][rndY] = "cobra";
+    }
+}
 
-        // Vamos ter certeza de que não estamos fora dos limites, pois também precisamos criar espaço para acomodar o
-        // outras duas peças do corpo
-        while ((rndX - snake.length) < 0) {
-            rndX = Math.round(Math.random() * 19);
-        }
 
-        for (var i = 0; i < snake.length; i++) {
-            snake[i] = { x: rndX - i, y: rndY };
-            map[rndX - i][rndY] = 2;
-        }
+function showGameOver() {
+    // Desative o jogo.
+    active = false;
 
-        return map;
+    // Limpe a tela
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    context.fillStyle = 'black';
+    context.font = '16px sans-serif';
+
+    context.fillText('Fim de jogo!', ((canvas.width / 2) - (context.measureText('Fim de jogo!').width / 2)), 50);
+
+    context.font = '12px sans-serif';
+
+    context.fillText('Sua pontuação foi: ' + score, ((canvas.width / 2) - (context.measureText('Sua pontuação foi: ' + score).width / 2)), 70);
+
+}
+
+function generateFood() {
+    // Gere uma posição aleatória para as linhas e colunas.
+    generateRandomXY();
+
+    // Também precisamos vigiar para não colocar a comida
+    // na mesma posição da matriz ocupada por uma parte do
+    // corpo da cobra.
+    while (map[rndX][rndY] === "cobra") {
+        rndX = Math.round(Math.random() * (xLineTotal - 1));
+        rndY = Math.round(Math.random() * (yLineTotal - 1));
     }
 
-    function showGameOver() {
-        // Desative o jogo.
-        active = false;
+    map[rndX][rndY] = "fruta";
+}
 
-        // Limpe a tela
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+function generateRandomXY() {
+    rndX = Math.round(Math.random() * (xLineTotal - 1));
+    rndY = Math.round(Math.random() * (yLineTotal - 1));
+}
 
-        ctx.fillStyle = 'black';
-        ctx.font = '16px sans-serif';
+window.onload = function () {
+    let largura = document.getElementById('campo1')
+    let altura = document.getElementById('campo2')
 
-        ctx.fillText('Fim de jogo!', ((canvas.width / 2) - (ctx.measureText('Fim de jogo!').width / 2)), 50);
+    largura.value = 450;
+    altura.value = 450;
 
-        ctx.font = '12px sans-serif';
+    largura.setAttribute('validado', true);
+    altura.setAttribute('validado', true);
 
-        ctx.fillText('Sua pontuação foi: ' + score, ((canvas.width / 2) - (ctx.measureText('Sua pontuação foi: ' + score).width / 2)), 70);
+    document.getElementById('start').disabled = false;
+    document.getElementById('start').click()
+}
 
+function generateMap() {
+
+    CanvasWidth = context.canvas.width;
+    CanvasHeight = context.canvas.height;
+
+    xLineTotal = Math.floor(CanvasWidth / girdSize); // Calcula o número de linhas do eixo x
+    yLineTotal = Math.floor(CanvasHeight / girdSize); // Calcula o número de linhas do eixo y
+
+    map = new Array(xLineTotal);
+    for (let i = 0; i < map.length; i++) {
+        map[i] = new Array(yLineTotal);
     }
-};
+}
+
